@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Agenda CRUD</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #2c3e50;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      input,
+      button {
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 3px #3498db;
+      }
+
+      button[type="submit"] {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #2980b9;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+
+      th {
+        background-color: #ecf0f1;
+        font-weight: 600;
+      }
+
+      td button {
+        padding: 6px 10px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      td button:hover {
+        opacity: 0.85;
+      }
+
+      td button:first-child {
+        background-color: #f1c40f;
+        color: #fff;
+      }
+
+      td button:last-child {
+        background-color: #e74c3c;
+        color: #fff;
+      }
+
+      @media (max-width: 600px) {
+        form {
+          grid-template-columns: 1fr;
+        }
+
+        table,
+        th,
+        td {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Agenda</h1>
+
+    <form id="agendaForm">
+      <input type="hidden" id="id" />
+      <input type="text" id="nombres" placeholder="Nombres" required />
+      <input type="text" id="apellidos" placeholder="Apellidos" required />
+      <input type="date" id="fecha_nacimiento" required />
+      <input type="text" id="direccion" placeholder="Dirección" required />
+      <input type="text" id="celular" placeholder="Celular" required />
+      <input type="email" id="correo" placeholder="Correo" required />
+      <button type="submit">Guardar</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombres</th>
+          <th>Apellidos</th>
+          <th>Fecha Nacimiento</th>
+          <th>Dirección</th>
+          <th>Celular</th>
+          <th>Correo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="agendaTable"></tbody>
+    </table>
+
+    <script>
+      const form = document.getElementById("agendaForm");
+      const tableBody = document.getElementById("agendaTable");
+      const apiUrl = "/agenda";
+
+      async function cargarAgenda() {
+        const res = await fetch(apiUrl);
+        const datos = await res.json();
+        tableBody.innerHTML = "";
+        datos.forEach((item) => {
+          tableBody.innerHTML += `
+          <tr>
+            <td>${item.id}</td>
+            <td>${item.nombres}</td>
+            <td>${item.apellidos}</td>
+            <td>${item.fecha_nacimiento}</td>
+            <td>${item.direccion}</td>
+            <td>${item.celular}</td>
+            <td>${item.correo}</td>
+            <td>
+              <button onclick='editar(${JSON.stringify(item)})'>✏️</button>
+              <button onclick='eliminar(${item.id})'>🗑️</button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("id").value;
+        const data = {
+          nombres: document.getElementById("nombres").value,
+          apellidos: document.getElementById("apellidos").value,
+          fecha_nacimiento: document.getElementById("fecha_nacimiento").value,
+          direccion: document.getElementById("direccion").value,
+          celular: document.getElementById("celular").value,
+          correo: document.getElementById("correo").value,
+        };
+
+        if (id) {
+          await fetch(`${apiUrl}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+        } else {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+        }
+        form.reset();
+        cargarAgenda();
+      });
+
+      async function eliminar(id) {
+        if (confirm("¿Eliminar este registro?")) {
+          await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+          cargarAgenda();
+        }
+      }
+
+      function editar(item) {
+        document.getElementById("id").value = item.id;
+        document.getElementById("nombres").value = item.nombres;
+        document.getElementById("apellidos").value = item.apellidos;
+        document.getElementById("fecha_nacimiento").value =
+          item.fecha_nacimiento;
+        document.getElementById("direccion").value = item.direccion;
+        document.getElementById("celular").value = item.celular;
+        document.getElementById("correo").value = item.correo;
+      }
+
+      cargarAgenda();
+    </script>
+  </body>
+</html>

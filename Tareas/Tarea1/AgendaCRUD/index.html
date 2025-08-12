@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto 30px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: #555;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #0077cc;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background-color: #005fa3;
+  }
+
+  #contactList {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  #contactList li {
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #contactList button {
+    margin-left: 10px;
+    background-color: #e74c3c;
+  }
+
+  #contactList button:hover {
+    background-color: #c0392b;
+  }
+
+  #contactList button:first-of-type {
+    background-color: #f39c12;
+  }
+
+  #contactList button:first-of-type:hover {
+    background-color: #d68910;
+  }
+</style>
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Agenda CRUD (Raw SQL)</title>
+  </head>
+  <body>
+    <h1>Agenda de Contactos</h1>
+
+    <!-- Formulario para Crear/Actualizar -->
+    <form id="contactForm">
+      <input type="hidden" id="id" />
+      <label>Nombres: <input type="text" id="nombres" required /></label><br />
+      <label>Apellidos: <input type="text" id="apellidos" required /></label
+      ><br />
+      <label
+        >Fecha Nacimiento: <input type="date" id="fecha_nacimiento" /></label
+      ><br />
+      <label>Dirección: <input type="text" id="direccion" /></label><br />
+      <label>Celular: <input type="text" id="celular" /></label><br />
+      <label>Correo: <input type="email" id="correo" /></label><br />
+      <button type="submit">Guardar</button>
+      <button type="button" id="resetBtn">Nuevo</button>
+    </form>
+
+    <!-- Lista de contactos -->
+    <ul id="contactList"></ul>
+
+    <script>
+      const apiUrl = "http://localhost:3000/agenda";
+
+      // Cargar lista de contactos
+      async function loadContacts() {
+        const res = await fetch(apiUrl);
+        const contacts = await res.json();
+        const list = document.getElementById("contactList");
+        list.innerHTML = "";
+        contacts.forEach((contact) => {
+          const li = document.createElement("li");
+          li.innerHTML = `${contact.nombres} ${contact.apellidos} - ${contact.correo}
+          <button onclick="editContact(${contact.id})">Editar</button>
+          <button onclick="deleteContact(${contact.id})">Eliminar</button>`;
+          list.appendChild(li);
+        });
+      }
+
+      // Crear o Actualizar
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = document.getElementById("id").value;
+          const data = {
+            nombres: document.getElementById("nombres").value,
+            apellidos: document.getElementById("apellidos").value,
+            fecha_nacimiento:
+              document.getElementById("fecha_nacimiento").value || null,
+            direccion: document.getElementById("direccion").value,
+            celular: document.getElementById("celular").value,
+            correo: document.getElementById("correo").value,
+          };
+          const method = id ? "PUT" : "POST";
+          const url = id ? `${apiUrl}/${id}` : apiUrl;
+          await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          resetForm();
+          loadContacts();
+        });
+
+      // Editar
+      async function editContact(id) {
+        const res = await fetch(`${apiUrl}/${id}`);
+        const contact = await res.json();
+        document.getElementById("id").value = contact.id;
+        document.getElementById("nombres").value = contact.nombres;
+        document.getElementById("apellidos").value = contact.apellidos;
+        document.getElementById("fecha_nacimiento").value =
+          contact.fecha_nacimiento?.split("T")[0];
+        document.getElementById("direccion").value = contact.direccion;
+        document.getElementById("celular").value = contact.celular;
+        document.getElementById("correo").value = contact.correo;
+      }
+
+      // Eliminar
+      async function deleteContact(id) {
+        await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+        loadContacts();
+      }
+
+      // Reset formulario
+      function resetForm() {
+        document.getElementById("contactForm").reset();
+        document.getElementById("id").value = "";
+      }
+      document.getElementById("resetBtn").addEventListener("click", resetForm);
+
+      loadContacts();
+    </script>
+  </body>
+</html>
