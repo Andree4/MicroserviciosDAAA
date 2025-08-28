@@ -1,0 +1,18 @@
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Docker
+Dockerfile
+*.log
+
+# HTML
+index.html
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

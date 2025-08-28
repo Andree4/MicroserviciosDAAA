@@ -1,0 +1,688 @@
+test> use bd_practica
+switched to db bd_practica
+bd_practica> db.alumnos.insertOne({
+...     nombres: "Laura",
+...     apellidos: "Gómez Torres",
+...     sexo: "F",
+...     casado: false,
+...     fecha_nacimiento: new Date("1998-04-15"),
+...     materias: ["SIS256", "COM350"],
+...     padre: { nombre: "Juan", apellido: "Torres" }
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId('689e50e6fb3df41aa3eec4a9')
+}
+bd_practica> db.alumnos.insertMany([
+...     {
+...         nombres: "Ana",
+...         apellidos: "López Vargas",
+...         sexo: "F",
+...         casado: true,
+...         fecha_nacimiento: new Date("1995-03-22"),
+...         materias: ["SIS00", "SIS258"],
+...         padre: { nombre: "Pedro", apellido: "López" }
+...     },
+...     {
+...         nombres: "Juan",
+...         apellidos: "García Pérez",
+...         sexo: "M",
+...         casado: false,
+...         fecha_nacimiento: new Date("2000-07-10"),
+...         materias: ["COM350", "SIS256"],
+...         padre: { nombre: "Carlos", apellido: "García" }
+...     },
+...     {
+...         nombres: "Sofía",
+...         apellidos: "Martínez Flores",
+...         sexo: "F",
+...         casado: false,
+...         fecha_nacimiento: new Date("1997-11-05"),
+...         materias: ["SIS258", "SIS00", "COM350"],
+...         padre: { nombre: "Miguel", apellido: "Martínez" }
+...     },
+...     {
+...         nombres: "Diego",
+...         apellidos: "Rodríguez Sánchez",
+...         sexo: "M",
+...         casado: true,
+...         fecha_nacimiento: new Date("1993-09-12"),
+...         materias: ["SIS256"],
+...         padre: { nombre: "Jorge", apellido: "Rodríguez" }
+...     },
+...     {
+...         nombres: "Valeria",
+...         apellidos: "Torres Ramírez",
+...         sexo: "F",
+...         casado: true,
+...         fecha_nacimiento: new Date("2001-01-30"),
+...         materias: ["COM350", "SIS258", "SIS256"],
+...         padre: { nombre: "Luis", apellido: "Torres" }
+...     }
+... ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('689e50eefb3df41aa3eec4aa'),
+    '1': ObjectId('689e50eefb3df41aa3eec4ab'),
+    '2': ObjectId('689e50eefb3df41aa3eec4ac'),
+    '3': ObjectId('689e50eefb3df41aa3eec4ad'),
+    '4': ObjectId('689e50eefb3df41aa3eec4ae')
+  }
+}
+bd_practica> db.alumnos.insertOne({
+...     nombres: "Marta",
+...     apellidos: "Sánchez López",
+...     sexo: "F",
+...     casado: false,
+...     fecha_nacimiento: new Date("1999-06-20"),
+...     materias: ["SIS00", "COM350"]
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId('689e50f5fb3df41aa3eec4af')
+}
+bd_practica> db.alumnos.insertOne({
+...     nombres: "Raúl",
+...     apellidos: "Fernández García",
+...     sexo: "M",
+...     casado: true,
+...     fecha_nacimiento: new Date("1990-08-10"),
+...     materias: ["SIS256", "COM350"],
+...     padre: { nombre: "Antonio", apellido: "Fernández" }
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId('689e50fbfb3df41aa3eec4b0')
+}
+bd_practica> db.alumnos.insertOne({
+...     nombres: "Isabel",
+...     apellidos: "Perez Sánchez",
+...     sexo: "F",
+...     casado: false,
+...     fecha_nacimiento: new Date("1996-02-14"),
+...     materias: ["SIS256", "SIS258", "SIS00", "COM350"],
+...     padre: { nombre: "Carlos", apellido: "Pérez" }
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId('689e510afb3df41aa3eec4b1')
+}
+bd_practica> db.alumnos.insertOne({
+...     nombres: "Pablo",
+...     apellidos: "Martínez Vargas",
+...     sexo: "M",
+...     casado: false,
+...     fecha_nacimiento: new Date("2002-03-25"),
+...     materias: ["COM350"],
+...     padre: { nombre: "José", apellido: "Martínez" }
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId('689e5112fb3df41aa3eec4b2')
+}
+bd_practica> db.alumnos.find(
+...     { "padre.nombre": { $in: ["Luis", "Miguel"] } },
+...     { nombres: 1, apellidos: 1, padre: 1, _id: 0 }
+... )
+[
+  {
+    nombres: 'María',
+    apellidos: 'Flores Pérez',
+    padre: { nombre: 'Luis', apellido: 'Vargas' }
+  },
+  {
+    nombres: 'Ana',
+    apellidos: 'Ramírez Ramírez',
+    padre: { nombre: 'Miguel', apellido: 'Pérez' }
+  },
+  {
+    nombres: 'Sofía',
+    apellidos: 'Martínez Flores',
+    padre: { nombre: 'Miguel', apellido: 'Martínez' }
+  },
+  {
+    nombres: 'Valeria',
+    apellidos: 'Torres Ramírez',
+    padre: { nombre: 'Luis', apellido: 'Torres' }
+  }
+]
+bd_practica> db.alumnos.find(
+...     { casado: false, materias: "SIS256" },
+...     { nombres: 1, apellidos: 1, materias: 1, _id: 0 }
+... )
+[
+  {
+    nombres: 'Ana',
+    apellidos: 'Rodríguez Flores',
+    materias: [ 'SIS256', 'SIS00' ]
+  },
+  {
+    nombres: 'Carla',
+    apellidos: 'Vargas Martínez',
+    materias: [ 'COM350', 'SIS258', 'SIS256', 'SIS777' ]
+  },
+  {
+    nombres: 'Elena',
+    apellidos: 'Martínez Torres',
+    materias: [ 'SIS258', 'COM350', 'SIS256', 'SIS777' ]
+  },
+  {
+    nombres: 'Carla',
+    apellidos: 'Flores Martínez',
+    materias: [ 'SIS258', 'SIS00', 'SIS256' ]
+  },
+  {
+    nombres: 'Carla',
+    apellidos: 'Vargas Sánchez',
+    materias: [ 'SIS00', 'SIS258', 'SIS256', 'COM350', 'SIS777' ]
+  },
+  {
+    nombres: 'Ana',
+    apellidos: 'Ramírez Ramírez',
+    materias: [ 'SIS258', 'COM350', 'SIS256', 'SIS00', 'SIS777' ]
+  },
+  {
+    nombres: 'Isabel',
+    apellidos: 'Perez Sánchez',
+    materias: [ 'SIS256', 'SIS258', 'SIS00', 'COM350', 'SIS777' ]
+  },
+  {
+    nombres: 'Laura',
+    apellidos: 'Gómez Torres',
+    materias: [ 'SIS256', 'COM350' ]
+  },
+  {
+    nombres: 'Juan',
+    apellidos: 'García Pérez',
+    materias: [ 'COM350', 'SIS256' ]
+  },
+  {
+    nombres: 'Isabel',
+    apellidos: 'Perez Sánchez',
+    materias: [ 'SIS256', 'SIS258', 'SIS00', 'COM350' ]
+  }
+]
+bd_practica> db.alumnos.countDocuments({
+...   $expr: { $gt: [ { $size: "$materias" }, 2 ] }
+... })
+...
+13
+bd_practica> db.alumnos.find(
+...     {},
+...     { nombres: 1, fecha_nacimiento: 1, _id: 0 }
+... ).sort({ fecha_nacimiento: 1 }).limit(10)
+[
+  {
+    nombres: 'Paula',
+    fecha_nacimiento: ISODate('1990-01-31T10:25:34.576Z')
+  },
+  {
+    nombres: 'María',
+    fecha_nacimiento: ISODate('1990-02-26T13:36:52.262Z')
+  },
+  {
+    nombres: 'Carla',
+    fecha_nacimiento: ISODate('1990-07-11T13:42:40.242Z')
+  },
+  {
+    nombres: 'Raúl',
+    fecha_nacimiento: ISODate('1990-08-10T00:00:00.000Z')
+  },
+  {
+    nombres: 'Carla',
+    fecha_nacimiento: ISODate('1992-05-16T02:47:46.804Z')
+  },
+  {
+    nombres: 'Carla',
+    fecha_nacimiento: ISODate('1993-06-26T10:15:44.221Z')
+  },
+  {
+    nombres: 'Diego',
+    fecha_nacimiento: ISODate('1993-09-12T00:00:00.000Z')
+  },
+  {
+    nombres: 'Elena',
+    fecha_nacimiento: ISODate('1995-02-27T18:22:40.689Z')
+  },
+  {
+    nombres: 'Ana',
+    fecha_nacimiento: ISODate('1995-03-22T00:00:00.000Z')
+  },
+  {
+    nombres: 'Camila',
+    fecha_nacimiento: ISODate('1995-07-04T08:41:36.603Z')
+  }
+]
+bd_practica> db.alumnos.find(
+...     { materias: { $all: ["COM350", "SIS00"] } },
+...     { nombres: 1, apellidos: 1, materias: 1, _id: 0 }
+... )
+[
+  {
+    nombres: 'Elena',
+    apellidos: 'Vargas Martínez',
+    materias: [ 'SIS00', 'COM350', 'SIS777' ]
+  },
+  {
+    nombres: 'Paula',
+    apellidos: 'López García',
+    materias: [ 'SIS258', 'SIS00', 'COM350', 'SIS777' ]
+  },
+  {
+    nombres: 'Carla',
+    apellidos: 'Vargas Sánchez',
+    materias: [ 'SIS00', 'SIS258', 'SIS256', 'COM350', 'SIS777' ]
+  },
+  {
+    nombres: 'Ana',
+    apellidos: 'Ramírez Ramírez',
+    materias: [ 'SIS258', 'COM350', 'SIS256', 'SIS00', 'SIS777' ]
+  },
+  {
+    nombres: 'Marta',
+    apellidos: 'Sánchez López',
+    materias: [ 'SIS00', 'COM350', 'SIS777' ]
+  },
+  {
+    nombres: 'Isabel',
+    apellidos: 'Perez Sánchez',
+    materias: [ 'SIS256', 'SIS258', 'SIS00', 'COM350', 'SIS777' ]
+  },
+  {
+    nombres: 'Sofía',
+    apellidos: 'Martínez Flores',
+    materias: [ 'SIS258', 'SIS00', 'COM350' ]
+  },
+  {
+    nombres: 'Marta',
+    apellidos: 'Sánchez López',
+    materias: [ 'SIS00', 'COM350' ]
+  },
+  {
+    nombres: 'Isabel',
+    apellidos: 'Perez Sánchez',
+    materias: [ 'SIS256', 'SIS258', 'SIS00', 'COM350' ]
+  }
+]
+bd_practica> db.alumnos.find(
+...     { sexo: "F" },
+...     { nombres: 1, sexo: 1, _id: 0 }
+... )
+[
+  { nombres: 'Gabriela', sexo: 'F' },
+  { nombres: 'Ana', sexo: 'F' },
+  { nombres: 'Elena', sexo: 'F' },
+  { nombres: 'Carla', sexo: 'F' },
+  { nombres: 'María', sexo: 'F' },
+  { nombres: 'Camila', sexo: 'F' },
+  { nombres: 'Elena', sexo: 'F' },
+  { nombres: 'Carla', sexo: 'F' },
+  { nombres: 'Paula', sexo: 'F' },
+  { nombres: 'Carla', sexo: 'F' },
+  { nombres: 'María', sexo: 'F' },
+  { nombres: 'Ana', sexo: 'F' },
+  { nombres: 'Marta', sexo: 'F' },
+  { nombres: 'Isabel', sexo: 'F' },
+  { nombres: 'Laura', sexo: 'F' },
+  { nombres: 'Ana', sexo: 'F' },
+  { nombres: 'Sofía', sexo: 'F' },
+  { nombres: 'Valeria', sexo: 'F' },
+  { nombres: 'Marta', sexo: 'F' },
+  { nombres: 'Isabel', sexo: 'F' }
+]
+bd_practica> db.alumnos.find().sort({ apellidos: 1 })
+[
+  {
+    _id: ObjectId('689e50fbfb3df41aa3eec4b0'),
+    nombres: 'Raúl',
+    apellidos: 'Fernández García',
+    sexo: 'M',
+    casado: true,
+    fecha_nacimiento: ISODate('1990-08-10T00:00:00.000Z'),
+    materias: [ 'SIS256', 'COM350' ],
+    padre: { nombre: 'Antonio', apellido: 'Fernández' }
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4e4'),
+    nombres: 'Carla',
+    apellidos: 'Flores Martínez',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1993-06-26T10:15:44.221Z'),
+    materias: [ 'SIS258', 'SIS00', 'SIS256' ],
+    padre: { nombre: 'Carlos', apellido: 'Torres' }
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4e1'),
+    nombres: 'María',
+    apellidos: 'Flores Pérez',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1990-02-26T13:36:52.262Z'),
+    materias: [ 'SIS00' ],
+    padre: { nombre: 'Luis', apellido: 'Vargas' }
+  },
+  {
+    _id: ObjectId('689e50eefb3df41aa3eec4ab'),
+    nombres: 'Juan',
+    apellidos: 'García Pérez',
+    sexo: 'M',
+    casado: false,
+    fecha_nacimiento: ISODate('2000-07-10T00:00:00.000Z'),
+    materias: [ 'COM350', 'SIS256' ],
+    padre: { nombre: 'Carlos', apellido: 'García' }
+  },
+  {
+    _id: ObjectId('689e50e6fb3df41aa3eec4a9'),
+    nombres: 'Laura',
+    apellidos: 'Gómez Torres',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1998-04-15T00:00:00.000Z'),
+    materias: [ 'SIS256', 'COM350' ],
+    padre: { nombre: 'Juan', apellido: 'Torres' }
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4ea'),
+    nombres: 'Paula',
+    apellidos: 'López García',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1990-01-31T10:25:34.576Z'),
+    materias: [ 'SIS258', 'SIS00', 'COM350', 'SIS777' ],
+    padre: { nombre: 'Mario', apellido: 'Sánchez' }
+  },
+  {
+    _id: ObjectId('689e50eefb3df41aa3eec4aa'),
+    nombres: 'Ana',
+    apellidos: 'López Vargas',
+    sexo: 'F',
+    casado: true,
+    fecha_nacimiento: ISODate('1995-03-22T00:00:00.000Z'),
+    materias: [ 'SIS00', 'SIS258' ],
+    padre: { nombre: 'Pedro', apellido: 'López' }
+  },
+  {
+    _id: ObjectId('689e50eefb3df41aa3eec4ac'),
+    nombres: 'Sofía',
+    apellidos: 'Martínez Flores',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1997-11-05T00:00:00.000Z'),
+    materias: [ 'SIS258', 'SIS00', 'COM350' ],
+    padre: { nombre: 'Miguel', apellido: 'Martínez' }
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4cb'),
+    nombres: 'Elena',
+    apellidos: 'Martínez Torres',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1995-02-27T18:22:40.689Z'),
+    materias: [ 'SIS258', 'COM350', 'SIS256', 'SIS777' ],
+    padre: { nombre: 'Jorge', apellido: 'Torres' }
+  },
+  {
+    _id: ObjectId('689e5112fb3df41aa3eec4b2'),
+    nombres: 'Pablo',
+    apellidos: 'Martínez Vargas',
+    sexo: 'M',
+    casado: false,
+    fecha_nacimiento: ISODate('2002-03-25T00:00:00.000Z'),
+    materias: [ 'COM350' ],
+    padre: { nombre: 'José', apellido: 'Martínez' }
+  },
+  {
+    _id: ObjectId('689e391996390c70d0eec4ab'),
+    nombres: 'Isabel',
+    apellidos: 'Perez Sánchez',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1996-02-14T00:00:00.000Z'),
+    materias: [ 'SIS256', 'SIS258', 'SIS00', 'COM350', 'SIS777' ],
+    padre: { nombre: 'Carlos', apellido: 'Pérez' }
+  },
+  {
+    _id: ObjectId('689e510afb3df41aa3eec4b1'),
+    nombres: 'Isabel',
+    apellidos: 'Perez Sánchez',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1996-02-14T00:00:00.000Z'),
+    materias: [ 'SIS256', 'SIS258', 'SIS00', 'COM350' ],
+    padre: { nombre: 'Carlos', apellido: 'Pérez' }
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4d9'),
+    nombres: 'Gabriela',
+    apellidos: 'Pérez Torres',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1997-10-24T05:56:29.752Z'),
+    materias: [ 'SIS258', 'COM350', 'SIS777' ],
+    padre: { nombre: 'Jorge', apellido: 'Pérez' }
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4d0'),
+    nombres: 'Camila',
+    apellidos: 'Ramírez López',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1995-07-04T08:41:36.603Z'),
+    materias: [ 'SIS258' ],
+    padre: { nombre: 'Hugo', apellido: 'Vargas' }
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4f8'),
+    nombres: 'Ana',
+    apellidos: 'Ramírez Ramírez',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1999-06-05T02:11:49.137Z'),
+    materias: [ 'SIS258', 'COM350', 'SIS256', 'SIS00', 'SIS777' ],
+    padre: { nombre: 'Miguel', apellido: 'Pérez' }
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4db'),
+    nombres: 'Ana',
+    apellidos: 'Rodríguez Flores',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1996-12-05T04:11:46.970Z'),
+    materias: [ 'SIS256', 'SIS00' ],
+    padre: { nombre: 'Pedro', apellido: 'Pérez' }
+  },
+  {
+    _id: ObjectId('689e50eefb3df41aa3eec4ad'),
+    nombres: 'Diego',
+    apellidos: 'Rodríguez Sánchez',
+    sexo: 'M',
+    casado: true,
+    fecha_nacimiento: ISODate('1993-09-12T00:00:00.000Z'),
+    materias: [ 'SIS256' ],
+    padre: { nombre: 'Jorge', apellido: 'Rodríguez' }
+  },
+  {
+    _id: ObjectId('689e389e96390c70d0eec4a9'),
+    nombres: 'Marta',
+    apellidos: 'Sánchez López',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1999-06-20T00:00:00.000Z'),
+    materias: [ 'SIS00', 'COM350', 'SIS777' ]
+  },
+  {
+    _id: ObjectId('689e50f5fb3df41aa3eec4af'),
+    nombres: 'Marta',
+    apellidos: 'Sánchez López',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1999-06-20T00:00:00.000Z'),
+    materias: [ 'SIS00', 'COM350' ]
+  },
+  {
+    _id: ObjectId('689dee388be1607eabeec4f7'),
+    nombres: 'María',
+    apellidos: 'Torres Flores',
+    sexo: 'F',
+    casado: false,
+    fecha_nacimiento: ISODate('1995-09-13T03:46:46.316Z'),
+    materias: [ 'SIS258' ],
+    padre: { nombre: 'Daniel', apellido: 'Torres' }
+  }
+]
+Type "it" for more
+bd_practica> db.alumnos.find(
+...     {
+...         fecha_nacimiento: {
+...             $gte: new Date("1998-01-01"),
+...             $lte: new Date("2003-12-31")
+...         }
+...     },
+...     { nombres: 1, apellidos: 1, fecha_nacimiento: 1, _id: 0 }
+... )
+[
+  {
+    nombres: 'Ana',
+    apellidos: 'Ramírez Ramírez',
+    fecha_nacimiento: ISODate('1999-06-05T02:11:49.137Z')
+  },
+  {
+    nombres: 'Marta',
+    apellidos: 'Sánchez López',
+    fecha_nacimiento: ISODate('1999-06-20T00:00:00.000Z')
+  },
+  {
+    nombres: 'Laura',
+    apellidos: 'Gómez Torres',
+    fecha_nacimiento: ISODate('1998-04-15T00:00:00.000Z')
+  },
+  {
+    nombres: 'Juan',
+    apellidos: 'García Pérez',
+    fecha_nacimiento: ISODate('2000-07-10T00:00:00.000Z')
+  },
+  {
+    nombres: 'Valeria',
+    apellidos: 'Torres Ramírez',
+    fecha_nacimiento: ISODate('2001-01-30T00:00:00.000Z')
+  },
+  {
+    nombres: 'Marta',
+    apellidos: 'Sánchez López',
+    fecha_nacimiento: ISODate('1999-06-20T00:00:00.000Z')
+  },
+  {
+    nombres: 'Pablo',
+    apellidos: 'Martínez Vargas',
+    fecha_nacimiento: ISODate('2002-03-25T00:00:00.000Z')
+  }
+]
+bd_practica> db.alumnos.find(
+...     { apellidos: { $regex: "ez$", $options: "i" } },
+...     { nombres: 1, apellidos: 1, _id: 0 }
+... )
+[
+  { nombres: 'Elena', apellidos: 'Vargas Martínez' },
+  { nombres: 'Carla', apellidos: 'Vargas Martínez' },
+  { nombres: 'María', apellidos: 'Flores Pérez' },
+  { nombres: 'Camila', apellidos: 'Ramírez López' },
+  { nombres: 'Carla', apellidos: 'Flores Martínez' },
+  { nombres: 'Carla', apellidos: 'Vargas Sánchez' },
+  { nombres: 'Ana', apellidos: 'Ramírez Ramírez' },
+  { nombres: 'Marta', apellidos: 'Sánchez López' },
+  { nombres: 'Isabel', apellidos: 'Perez Sánchez' },
+  { nombres: 'Juan', apellidos: 'García Pérez' },
+  { nombres: 'Diego', apellidos: 'Rodríguez Sánchez' },
+  { nombres: 'Valeria', apellidos: 'Torres Ramírez' },
+  { nombres: 'Marta', apellidos: 'Sánchez López' },
+  { nombres: 'Isabel', apellidos: 'Perez Sánchez' }
+]
+bd_practica> db.alumnos.countDocuments({ casado: true, materias: "SIS258" })
+2
+bd_practica> db.alumnos.updateMany(
+...     { nombres: "Luis" },
+...     { $set: { nombres: "Luis Alberto" } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+bd_practica> db.alumnos.updateMany(
+...     { materias: "COM350" },
+...     { $push: { materias: "SIS777" } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 17,
+  modifiedCount: 17,
+  upsertedCount: 0
+}
+bd_practica> db.alumnos.updateMany(
+...     { materias: { $size: { $lt: 2 } } },
+...     { $set: { casado: false } }
+... )
+MongoServerError: Failed to parse $size. Expected a number in: $size: { $lt: 2 }
+bd_practica> db.alumnos.updateMany(
+...   { $expr: { $lt: [ { $size: "$materias" }, 2 ] } },
+...   { $set: { casado: false } }
+... )
+...
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 4,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+bd_practica> db.alumnos.updateMany(
+...     { materias: "SIS256" },
+...     { $pull: { materias: "SIS256" } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 13,
+  modifiedCount: 13,
+  upsertedCount: 0
+}
+bd_practica> db.alumnos.updateMany(
+...     { "padre.nombre": "Juan" },
+...     { $set: { "padre.nombre": "Juan José" } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+bd_practica> db.alumnos.updateMany(
+...     {},
+...     { $set: { activo: true } }
+... )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 24,
+  modifiedCount: 24,
+  upsertedCount: 0
+}
+bd_practica> db.alumnos.deleteMany({ sexo: "M" })
+{ acknowledged: true, deletedCount: 4 }
+bd_practica> db.alumnos.deleteMany({ materias: "SIS777" })
+{ acknowledged: true, deletedCount: 14 }
+bd_practica> db.alumnos.deleteMany({ "padre.apellido": "Ramírez" })
+{ acknowledged: true, deletedCount: 0 }
+bd_practica> db.alumnos.deleteMany({ fecha_nacimiento: { $gt: new Date("2004-12-31") } })
+{ acknowledged: true, deletedCount: 0 }
+bd_practica> db.alumnos.deleteMany({ casado: true })
+{ acknowledged: true, deletedCount: 1 }
+bd_practica> db.alumnos.deleteOne({ materias: "SIS258" })
+{ acknowledged: true, deletedCount: 1 }
+bd_practica>
