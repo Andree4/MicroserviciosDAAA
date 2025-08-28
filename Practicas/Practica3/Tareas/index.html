@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestor de Tareas</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4f8;
+        margin: 0;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+        background-color: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 900px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333333;
+        margin-bottom: 24px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 30px;
+      }
+
+      label {
+        font-weight: 600;
+        color: #555555;
+        margin-bottom: 6px;
+      }
+
+      input,
+      textarea,
+      select {
+        padding: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 6px;
+        font-size: 16px;
+        width: 100%;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: fit-content;
+      }
+
+      button:hover {
+        background-color: #005fa3;
+      }
+
+      #resetBtn {
+        background-color: #6c757d;
+      }
+
+      #resetBtn:hover {
+        background-color: #5a6268;
+      }
+
+      #error {
+        color: #d9534f;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #e9eff5;
+        color: #333;
+      }
+
+      td button {
+        margin-right: 8px;
+        background-color: #17a2b8;
+      }
+
+      td button:last-child {
+        background-color: #dc3545;
+      }
+
+      td button:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gestor de Tareas</h1>
+      <form id="taskForm">
+        <input type="hidden" id="taskId" />
+        <div>
+          <label for="title">Título</label>
+          <input type="text" id="title" required />
+        </div>
+        <div>
+          <label for="description">Descripción</label>
+          <textarea id="description" required></textarea>
+        </div>
+        <div>
+          <label for="status">Estado</label>
+          <select id="status">
+            <option value="pending">Pendiente</option>
+            <option value="in_progress">En Progreso</option>
+            <option value="completed">Completada</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 10px">
+          <button type="submit" id="submitBtn">Agregar Tarea</button>
+          <button type="button" id="resetBtn">Restablecer Formulario</button>
+        </div>
+      </form>
+      <div id="error"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Fecha de Creación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="taskTableBody"></tbody>
+      </table>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:3000/api/tasks";
+      const form = document.getElementById("taskForm");
+      const taskTableBody = document.getElementById("taskTableBody");
+      const errorDiv = document.getElementById("error");
+      const submitBtn = document.getElementById("submitBtn");
+      const resetBtn = document.getElementById("resetBtn");
+
+      async function loadTasks() {
+        try {
+          const response = await fetch(API_URL);
+          const tasks = await response.json();
+          taskTableBody.innerHTML = "";
+          tasks.forEach((task) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${task.title}</td>
+              <td>${task.description}</td>
+              <td>${task.status}</td>
+              <td>${new Date(task.createdAt).toLocaleString()}</td>
+              <td>
+                <button onclick="editTask('${task._id}')">Editar</button>
+                <button onclick="deleteTask('${task._id}')">Eliminar</button>
+              </td>
+            `;
+            taskTableBody.appendChild(row);
+          });
+        } catch (err) {
+          showError("Error al cargar tareas");
+        }
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const taskId = document.getElementById("taskId").value;
+        const title = document.getElementById("title").value;
+        const description = document.getElementById("description").value;
+        const status = document.getElementById("status").value;
+        const method = taskId ? "PUT" : "POST";
+        const url = taskId ? `${API_URL}/${taskId}` : API_URL;
+
+        try {
+          const response = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, description, status }),
+          });
+          if (response.ok) {
+            resetForm();
+            loadTasks();
+          } else {
+            const data = await response.json();
+            showError(data.error || "Error al guardar tarea");
+          }
+        } catch (err) {
+          showError("Error al guardar tarea");
+        }
+      });
+
+      async function editTask(id) {
+        try {
+          const response = await fetch(`${API_URL}/${id}`);
+          const task = await response.json();
+          document.getElementById("taskId").value = task._id;
+          document.getElementById("title").value = task.title;
+          document.getElementById("description").value = task.description;
+          document.getElementById("status").value = task.status;
+          submitBtn.textContent = "Actualizar Tarea";
+        } catch (err) {
+          showError("Error al cargar tarea");
+        }
+      }
+
+      async function deleteTask(id) {
+        if (confirm("¿Estás seguro de eliminar esta tarea?")) {
+          try {
+            const response = await fetch(`${API_URL}/${id}`, {
+              method: "DELETE",
+            });
+            if (response.ok) {
+              loadTasks();
+            } else {
+              showError("Error al eliminar tarea");
+            }
+          } catch (err) {
+            showError("Error al eliminar tarea");
+          }
+        }
+      }
+
+      resetBtn.addEventListener("click", resetForm);
+
+      function resetForm() {
+        form.reset();
+        document.getElementById("taskId").value = "";
+        submitBtn.textContent = "Agregar Tarea";
+        errorDiv.textContent = "";
+      }
+
+      function showError(message) {
+        errorDiv.textContent = message;
+        setTimeout(() => (errorDiv.textContent = ""), 3000);
+      }
+
+      loadTasks();
+    </script>
+  </body>
+</html>

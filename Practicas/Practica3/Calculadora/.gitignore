@@ -2,13 +2,6 @@
 node_modules/
 npm-debug.log*
 
-# Docker
-Dockerfile
-*.log
-
-# HTML
-index.html
-
 # Editor
 .vscode/
 .idea/

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Management</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4f8;
+        margin: 0;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+        background-color: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 900px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333333;
+        margin-bottom: 24px;
+      }
+
+      form {
+        margin-bottom: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: center;
+      }
+
+      label {
+        font-weight: 600;
+        color: #555555;
+        width: 100%;
+      }
+
+      input {
+        padding: 10px;
+        border: 1px solid #cccccc;
+        border-radius: 6px;
+        font-size: 16px;
+        width: calc(50% - 10px);
+      }
+
+      button,
+      a.button-link {
+        padding: 10px 20px;
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover,
+      a.button-link:hover {
+        background-color: #005fa3;
+      }
+
+      button[type="submit"] {
+        background-color: #28a745;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #218838;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #e9eff5;
+        color: #333;
+      }
+
+      td form {
+        display: inline;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>User Management</h1>
+      <% if (showForm) { %>
+      <form action="/add" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+        <button type="submit">Add User</button>
+      </form>
+      <a href="/" class="button-link">Back to List</a>
+      <% } else { %>
+      <a href="/add" class="button-link">Add New User</a>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Created At</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(user => { %>
+          <tr>
+            <td><%= user.id %></td>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td><%= user.created_at %></td>
+            <td>
+              <form
+                action="/delete/<%= user.id %>"
+                method="POST"
+                onsubmit="return confirm('Are you sure?')"
+              >
+                <button type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+  </body>
+</html>

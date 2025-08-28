@@ -2,17 +2,6 @@
 node_modules/
 npm-debug.log*
 
-# Docker
-Dockerfile
-docker-compose.yml
-*.log
-
-# Templates
-index.ejs
-
-# SQL scripts
-init.sql
-
 # Editor
 .vscode/
 .idea/

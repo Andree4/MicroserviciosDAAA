@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Calculadora Web</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background-color: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333333;
+        margin-bottom: 24px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555555;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #cccccc;
+        border-radius: 6px;
+        font-size: 16px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #005fa3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Calculadora Web</h1>
+      <form action="/calcular" method="POST">
+        <label for="a">Valor A:</label>
+        <input type="number" step="any" name="a" required />
+
+        <label for="b">Valor B:</label>
+        <input type="number" step="any" name="b" required />
+
+        <label for="operacion">Operación:</label>
+        <select name="operacion" required>
+          <option value="sumar">Sumar</option>
+          <option value="restar">Restar</option>
+          <option value="multiplicar">Multiplicar</option>
+          <option value="dividir">Dividir</option>
+        </select>
+
+        <button type="submit">Calcular</button>
+      </form>
+    </div>
+  </body>
+</html>
