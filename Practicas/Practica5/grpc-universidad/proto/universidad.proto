@@ -1,0 +1,69 @@
+syntax = "proto3";
+package universidad;
+
+import "google/protobuf/empty.proto";
+
+// Mensaje para Estudiante
+message Estudiante {
+  string ci = 1;
+  string nombres = 2;
+  string apellidos = 3;
+  string carrera = 4;
+}
+
+// Mensaje para Curso
+message Curso {
+  string codigo = 1;
+  string nombre = 2;
+  string docente = 3;
+}
+
+// Solicitud para estudiante (por CI)
+message EstudianteRequest {
+  string ci = 1;
+}
+
+// Solicitud para curso (por código)
+message CursoRequest {
+  string codigo = 1;
+}
+
+// Solicitud para inscripción
+message InscripcionRequest {
+  string ci = 1;
+  string codigo_curso = 2;
+}
+
+// Respuesta para estudiante
+message EstudianteResponse {
+  Estudiante estudiante = 1;
+}
+
+// Respuesta para curso
+message CursoResponse {
+  Curso curso = 1;
+}
+
+// Respuesta para inscripción
+message InscripcionResponse {
+  string mensaje = 1;
+}
+
+// Lista de cursos
+message CursosList {
+  repeated Curso cursos = 1;
+}
+
+// Lista de estudiantes
+message EstudiantesList {
+  repeated Estudiante estudiantes = 1;
+}
+
+// Servicio gRPC
+service UniversidadService {
+  rpc AgregarEstudiante (Estudiante) returns (EstudianteResponse);
+  rpc AgregarCurso (Curso) returns (CursoResponse);
+  rpc InscribirEstudiante (InscripcionRequest) returns (InscripcionResponse);
+  rpc ListarCursosDeEstudiante (EstudianteRequest) returns (CursosList);
+  rpc ListarEstudiantesDeCurso (CursoRequest) returns (EstudiantesList);
+}
