@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Medico CRUD</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #2c3e50;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      input,
+      button {
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 3px #3498db;
+      }
+
+      button[type="submit"] {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #2980b9;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+
+      th {
+        background-color: #ecf0f1;
+        font-weight: 600;
+      }
+
+      td button {
+        padding: 6px 10px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      td button:hover {
+        opacity: 0.85;
+      }
+
+      td button:first-child {
+        background-color: #f1c40f;
+        color: #fff;
+      }
+
+      td button:last-child {
+        background-color: #e74c3c;
+        color: #fff;
+      }
+
+      @media (max-width: 600px) {
+        form {
+          grid-template-columns: 1fr;
+        }
+
+        table,
+        th,
+        td {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Medico</h1>
+
+    <form id="MedicoForm">
+      <input type="hidden" id="id" />
+      <input type="text" id="nombre" placeholder="nombre" required />
+      <input type="text" id="apellido" placeholder="apellido" required />
+      <input
+        type="text"
+        id="cedula_profesional"
+        placeholder="cedula_profesional"
+        required
+      />
+      <input
+        type="text"
+        id="especialidad"
+        placeholder="especialidad"
+        required
+      />
+      <input
+        type="number"
+        id="años_de_experiencia"
+        placeholder="años_de_experiencia"
+        required
+      />
+      <input type="email" id="correo" placeholder="correo" required />
+      <button type="submit">Guardar</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>nombre</th>
+          <th>apellido</th>
+          <th>cédula profesional</th>
+          <th>especialidad</th>
+          <th>años de experiencia</th>
+          <th>correo electronico</th>
+        </tr>
+      </thead>
+      <tbody id="MedicoTable"></tbody>
+    </table>
+
+    <script>
+      const form = document.getElementById("MedicoForm");
+      const tableBody = document.getElementById("MedicoTable");
+      const apiUrl = "/Medico";
+
+      async function cargarMedico() {
+        const res = await fetch(apiUrl);
+        const datos = await res.json();
+        tableBody.innerHTML = "";
+        datos.forEach((item) => {
+          tableBody.innerHTML += `
+          <tr>
+            <td>${item.id}</td>
+            <td>${item.nombre}</td>
+            <td>${item.apellido}</td>
+            <td>${item.cedula_profesional}</td>
+            <td>${item.especialidad}</td>
+            <td>${item.años_de_experiencia}</td>
+            <td>${item.correo}</td>
+            <td>
+              <button onclick='editar(${JSON.stringify(item)})'>editar</button>
+              <button onclick='eliminar(${item.id})'>eliminar</button>
+            </td>
+          </tr>
+        `;
+        });
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("id").value;
+        const data = {
+          nombre: document.getElementById("nombre").value,
+          apellido: document.getElementById("apellido").value,
+          cedula_profesional:
+            document.getElementById("cedula_profesional").value,
+          especialidad: document.getElementById("especialidad").value,
+          años_de_experiencia: document.getElementById("años_de_experiencia")
+            .value,
+          correo: document.getElementById("correo").value,
+        };
+
+        if (id) {
+          await fetch(`${apiUrl}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+        } else {
+          await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+        }
+        form.reset();
+        cargarMedico();
+      });
+
+      async function eliminar(id) {
+        if (confirm("¿Eliminar este registro?")) {
+          await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+          cargarMedico();
+        }
+      }
+
+      function editar(item) {
+        document.getElementById("id").value = item.id;
+        document.getElementById("nombre").value = item.nombre;
+        document.getElementById("apellido").value = item.apellido;
+        document.getElementById("cedula_profesional").value =
+          item.cedula_profesional;
+        document.getElementById("especialidad").value = item.especialidad;
+        document.getElementById("años_de_experiencia").value =
+          item.años_de_experiencia;
+        document.getElementById("correo").value = item.correo;
+      }
+
+      cargarMedico();
+    </script>
+  </body>
+</html>
